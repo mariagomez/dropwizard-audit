@@ -10,3 +10,22 @@ idea {
         sourceDirs += file('src/main/resources')
     }
 }
+
+project.ext {
+    dropwizardVersion = '0.7.0'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile(
+            'io.dropwizard:dropwizard-core:' + dropwizardVersion
+    )
+    testCompile(
+            'junit:junit:4.11',
+            'org.hamcrest:hamcrest-core:1.3',
+            'org.mockito:mockito-all:1.9.5'
+    )
+}
