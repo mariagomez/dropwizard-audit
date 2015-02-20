@@ -8,6 +8,7 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 public class AuditMethodDispatcherAdapterTest {
 
@@ -25,9 +26,11 @@ public class AuditMethodDispatcherAdapterTest {
 
     @Test
     public void shouldReturnAnInstanceOfAuditProvider() {
-        ResourceMethodDispatchProvider provider = adapter.adapt(mock(ResourceMethodDispatchProvider.class));
+        ResourceMethodDispatchProvider providerToAdapt = mock(ResourceMethodDispatchProvider.class);
+        AuditProvider expected = new AuditProvider(providerToAdapt);
+        ResourceMethodDispatchProvider provider = adapter.adapt(providerToAdapt);
 
-        assertThat(provider, instanceOf(AuditProvider.class));
+        assertReflectionEquals(expected, provider);
     }
 
 }

@@ -6,6 +6,6 @@ import com.sun.jersey.spi.container.ResourceMethodDispatchProvider;
 public class AuditMethodDispatcherAdapter implements ResourceMethodDispatchAdapter {
     @Override
     public ResourceMethodDispatchProvider adapt(ResourceMethodDispatchProvider provider) {
-        return new AuditProvider();
+        return new AuditProvider(provider);
     }
 }
