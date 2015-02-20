@@ -5,12 +5,6 @@ task wrapper(type: Wrapper) {
     gradleVersion = '2.3'
 }
 
-idea {
-    module {
-        sourceDirs += file('src/main/resources')
-    }
-}
-
 project.ext {
     dropwizardVersion = '0.7.0'
 }
@@ -29,3 +23,11 @@ dependencies {
             'org.mockito:mockito-all:1.9.5'
     )
 }
+
+idea {
+    module {
+        sourceDirs += file('src/main/resources')
+    }
+}
+
+compileJava.options.encoding = 'UTF-8'
