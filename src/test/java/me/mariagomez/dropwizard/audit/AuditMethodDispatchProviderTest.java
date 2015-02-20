@@ -36,7 +36,7 @@ public class AuditMethodDispatchProviderTest {
         initMocks(this);
         when(provider.create(abstractResourceMethod)).thenReturn(defaultRequestDispatcher);
 
-        auditMethodDispatchProvider = new AuditMethodDispatchProvider(provider);
+        auditMethodDispatchProvider = new AuditMethodDispatchProvider(provider, auditWriter);
     }
 
     @Test

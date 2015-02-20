@@ -13,8 +13,9 @@ public class AuditMethodDispatchProvider implements ResourceMethodDispatchProvid
     private ResourceMethodDispatchProvider provider;
     private AuditWriter auditWriter;
 
-    public AuditMethodDispatchProvider(ResourceMethodDispatchProvider provider) {
+    public AuditMethodDispatchProvider(ResourceMethodDispatchProvider provider, AuditWriter auditWriter) {
         this.provider = provider;
+        this.auditWriter = auditWriter;
     }
 
     @Override
