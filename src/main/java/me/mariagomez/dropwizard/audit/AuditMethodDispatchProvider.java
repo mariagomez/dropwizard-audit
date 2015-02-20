@@ -7,12 +7,12 @@ import com.sun.jersey.spi.dispatch.RequestDispatcher;
 import java.util.Arrays;
 import java.util.List;
 
-public class AuditProvider implements ResourceMethodDispatchProvider {
+public class AuditMethodDispatchProvider implements ResourceMethodDispatchProvider {
 
     private static final List<String> AUDITABLE_METHODS = Arrays.asList("POST", "PUT", "DELETE");
     private ResourceMethodDispatchProvider provider;
 
-    public AuditProvider(ResourceMethodDispatchProvider provider) {
+    public AuditMethodDispatchProvider(ResourceMethodDispatchProvider provider) {
         this.provider = provider;
     }
 
@@ -20,7 +20,7 @@ public class AuditProvider implements ResourceMethodDispatchProvider {
     public RequestDispatcher create(AbstractResourceMethod abstractResourceMethod) {
         RequestDispatcher requestDispatcher = provider.create(abstractResourceMethod);
         if (isMethodAuditable(abstractResourceMethod.getHttpMethod())){
-            return new AuditMethodDispatcher(requestDispatcher);
+            return new AuditRequestDispatcher(requestDispatcher);
         }
         return requestDispatcher;
     }

@@ -34,6 +34,6 @@ public class AuditBundleTest {
     @Test
     public void shouldRegisterAuditAdapter() throws Exception {
         auditBundle.run(configuration, environment);
-        verify(jersey, times(1)).register(isA(AuditMethodDispatcherAdapter.class));
+        verify(jersey, times(1)).register(isA(AuditMethodDispatchAdapter.class));
     }
 }

@@ -9,7 +9,7 @@ public class AuditBundle<T extends Configuration> implements ConfiguredBundle<T>
 
     @Override
     public void run(T configuration, Environment environment) {
-        environment.jersey().register(new AuditMethodDispatcherAdapter());
+        environment.jersey().register(new AuditMethodDispatchAdapter());
     }
 
     @Override

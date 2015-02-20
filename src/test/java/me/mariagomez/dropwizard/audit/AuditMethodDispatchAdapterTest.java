@@ -10,13 +10,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
-public class AuditMethodDispatcherAdapterTest {
+public class AuditMethodDispatchAdapterTest {
 
-    private AuditMethodDispatcherAdapter adapter;
+    private AuditMethodDispatchAdapter adapter;
 
     @Before
     public void setUp() {
-        adapter = new AuditMethodDispatcherAdapter();
+        adapter = new AuditMethodDispatchAdapter();
     }
 
     @Test
@@ -27,7 +27,7 @@ public class AuditMethodDispatcherAdapterTest {
     @Test
     public void shouldReturnAnInstanceOfAuditProvider() {
         ResourceMethodDispatchProvider providerToAdapt = mock(ResourceMethodDispatchProvider.class);
-        AuditProvider expected = new AuditProvider(providerToAdapt);
+        AuditMethodDispatchProvider expected = new AuditMethodDispatchProvider(providerToAdapt);
         ResourceMethodDispatchProvider provider = adapter.adapt(providerToAdapt);
 
         assertReflectionEquals(expected, provider);

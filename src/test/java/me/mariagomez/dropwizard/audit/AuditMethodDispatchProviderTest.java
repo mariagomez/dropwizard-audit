@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
-public class AuditProviderTest {
+public class AuditMethodDispatchProviderTest {
 
     @Mock
     private ResourceMethodDispatchProvider provider;
@@ -27,29 +27,29 @@ public class AuditProviderTest {
     private RequestDispatcher defaultRequestDispatcher;
     private List<String> auditMethods = newArrayList("POST", "PUT", "DELETE");
 
-    private AuditProvider auditProvider;
+    private AuditMethodDispatchProvider auditMethodDispatchProvider;
 
     @Before
     public void setUp() throws Exception {
         initMocks(this);
         when(provider.create(abstractResourceMethod)).thenReturn(defaultRequestDispatcher);
 
-        auditProvider = new AuditProvider(provider);
+        auditMethodDispatchProvider = new AuditMethodDispatchProvider(provider);
     }
 
     @Test
     public void shouldReturnDefaultDispatcherWhenMethodIsNotPOSTOrPUTOrDELETE() {
         when(abstractResourceMethod.getHttpMethod()).thenReturn(randomAlphabetic(4));
-        RequestDispatcher requestDispatcherActual = auditProvider.create(abstractResourceMethod);
+        RequestDispatcher requestDispatcherActual = auditMethodDispatchProvider.create(abstractResourceMethod);
         assertThat(requestDispatcherActual, is(defaultRequestDispatcher));
     }
 
     @Test
     public void shouldReturnCustomDispatcherWhenMethodIsPOSTOrPUTOrDELETE() {
-        AuditMethodDispatcher expected = new AuditMethodDispatcher(defaultRequestDispatcher);
+        AuditRequestDispatcher expected = new AuditRequestDispatcher(defaultRequestDispatcher);
         for (String auditMethod : auditMethods) {
             when(abstractResourceMethod.getHttpMethod()).thenReturn(auditMethod);
-            AuditMethodDispatcher actual = (AuditMethodDispatcher) auditProvider.create(abstractResourceMethod);
+            AuditRequestDispatcher actual = (AuditRequestDispatcher) auditMethodDispatchProvider.create(abstractResourceMethod);
             assertReflectionEquals(actual, expected);
         }
     }
