@@ -11,6 +11,7 @@ public class AuditMethodDispatchProvider implements ResourceMethodDispatchProvid
 
     private static final List<String> AUDITABLE_METHODS = Arrays.asList("POST", "PUT", "DELETE");
     private ResourceMethodDispatchProvider provider;
+    private AuditWriter auditWriter;
 
     public AuditMethodDispatchProvider(ResourceMethodDispatchProvider provider) {
         this.provider = provider;
@@ -20,7 +21,7 @@ public class AuditMethodDispatchProvider implements ResourceMethodDispatchProvid
     public RequestDispatcher create(AbstractResourceMethod abstractResourceMethod) {
         RequestDispatcher requestDispatcher = provider.create(abstractResourceMethod);
         if (isMethodAuditable(abstractResourceMethod.getHttpMethod())){
-            return new AuditRequestDispatcher(requestDispatcher);
+            return new AuditRequestDispatcher(requestDispatcher, auditWriter);
         }
         return requestDispatcher;
     }

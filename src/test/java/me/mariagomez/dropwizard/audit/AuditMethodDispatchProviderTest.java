@@ -25,6 +25,8 @@ public class AuditMethodDispatchProviderTest {
     private AbstractResourceMethod abstractResourceMethod;
     @Mock
     private RequestDispatcher defaultRequestDispatcher;
+    @Mock
+    private AuditWriter auditWriter;
     private List<String> auditMethods = newArrayList("POST", "PUT", "DELETE");
 
     private AuditMethodDispatchProvider auditMethodDispatchProvider;
@@ -46,7 +48,7 @@ public class AuditMethodDispatchProviderTest {
 
     @Test
     public void shouldReturnCustomDispatcherWhenMethodIsPOSTOrPUTOrDELETE() {
-        AuditRequestDispatcher expected = new AuditRequestDispatcher(defaultRequestDispatcher);
+        AuditRequestDispatcher expected = new AuditRequestDispatcher(defaultRequestDispatcher, auditWriter);
         for (String auditMethod : auditMethods) {
             when(abstractResourceMethod.getHttpMethod()).thenReturn(auditMethod);
             AuditRequestDispatcher actual = (AuditRequestDispatcher) auditMethodDispatchProvider.create(abstractResourceMethod);
