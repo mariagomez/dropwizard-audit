@@ -2,8 +2,10 @@ package me.mariagomez.dropwizard.audit;
 
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
+import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import me.mariagomez.dropwizard.audit.filters.RemoteAddressFilter;
 
 public class AuditBundle<T extends Configuration> implements ConfiguredBundle<T> {
 
@@ -15,7 +17,9 @@ public class AuditBundle<T extends Configuration> implements ConfiguredBundle<T>
 
     @Override
     public void run(T configuration, Environment environment) {
-        environment.jersey().register(new AuditMethodDispatchAdapter(auditWriter));
+        JerseyEnvironment jersey = environment.jersey();
+        jersey.register(new AuditMethodDispatchAdapter(auditWriter));
+        jersey.getResourceConfig().getContainerRequestFilters().add(new RemoteAddressFilter());
     }
 
     @Override
