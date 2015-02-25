@@ -10,14 +10,17 @@ public class AuditInfo {
     private String entity;
     private String path;
     private String remoteAddress;
+    private String username;
 
-    public AuditInfo(String method, int responseCode, DateTime date, String entity, String path, String remoteAddress) {
+    public AuditInfo(String method, int responseCode, DateTime date, String entity, String path, String remoteAddress,
+                     String username) {
         this.method = method;
         this.responseCode = responseCode;
         this.date = date;
         this.entity = entity;
         this.path = path;
         this.remoteAddress = remoteAddress;
+        this.username = username;
     }
 
     public String getMethod() {
@@ -42,5 +45,9 @@ public class AuditInfo {
 
     public String getRemoteAddress() {
         return remoteAddress;
+    }
+
+    public String getUsername() {
+        return username;
     }
 }

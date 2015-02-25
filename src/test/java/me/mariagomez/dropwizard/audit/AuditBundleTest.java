@@ -5,6 +5,7 @@ import io.dropwizard.Configuration;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.setup.Environment;
 import me.mariagomez.dropwizard.audit.filters.RemoteAddressFilter;
+import me.mariagomez.dropwizard.audit.providers.PrincipalProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -31,6 +32,8 @@ public class AuditBundleTest {
     private AuditWriter auditWriter;
     @Mock
     private ResourceConfig resourceConfig;
+    @Mock
+    private PrincipalProvider principalProvider;
 
     private List<RemoteAddressFilter> filters;
     private AuditBundle auditBundle;
@@ -42,12 +45,12 @@ public class AuditBundleTest {
         when(environment.jersey()).thenReturn(jersey);
         when(jersey.getResourceConfig()).thenReturn(resourceConfig);
         when(resourceConfig.getContainerRequestFilters()).thenReturn(filters);
-        auditBundle = new AuditBundle(auditWriter);
+        auditBundle = new AuditBundle(auditWriter, principalProvider);
     }
 
     @Test
     public void shouldRegisterAuditAdapter() throws Exception {
-        AuditMethodDispatchAdapter auditMethodDispatchAdapter = new AuditMethodDispatchAdapter(auditWriter);
+        AuditMethodDispatchAdapter auditMethodDispatchAdapter = new AuditMethodDispatchAdapter(auditWriter, principalProvider);
         auditBundle.run(configuration, environment);
         verify(jersey, times(1)).register(refEq(auditMethodDispatchAdapter));
     }

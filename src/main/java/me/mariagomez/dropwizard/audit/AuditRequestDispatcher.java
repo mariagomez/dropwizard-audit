@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.api.core.HttpContext;
 import com.sun.jersey.spi.dispatch.RequestDispatcher;
 import io.dropwizard.jackson.Jackson;
+import me.mariagomez.dropwizard.audit.providers.PrincipalProvider;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,10 +19,13 @@ public class AuditRequestDispatcher implements RequestDispatcher {
 
     private RequestDispatcher dispatcher;
     private AuditWriter auditWriter;
+    private PrincipalProvider principalProvider;
 
-    public AuditRequestDispatcher(RequestDispatcher dispatcher, AuditWriter auditWriter) {
+    public AuditRequestDispatcher(RequestDispatcher dispatcher, AuditWriter auditWriter,
+                                  PrincipalProvider principalProvider) {
         this.dispatcher = dispatcher;
         this.auditWriter = auditWriter;
+        this.principalProvider = principalProvider;
     }
 
     @Override
@@ -35,6 +39,7 @@ public class AuditRequestDispatcher implements RequestDispatcher {
         String method = context.getRequest().getMethod();
         String path = context.getRequest().getPath();
         String remoteAddress = context.getRequest().getRequestHeaders().getFirst(X_REMOTE_ADDR);
+        String username = principalProvider.getUsername();
         DateTime date = DateTime.now();
 
         String entity = null;
@@ -44,8 +49,7 @@ public class AuditRequestDispatcher implements RequestDispatcher {
             LOGGER.error("Error while parsing the entity. \n Message: " + e.getMessage());
         }
 
-        AuditInfo auditInfo = new AuditInfo(method, responseCode, date, entity, path, remoteAddress);
+        AuditInfo auditInfo = new AuditInfo(method, responseCode, date, entity, path, remoteAddress, username);
         auditWriter.write(auditInfo);
-
     }
 }

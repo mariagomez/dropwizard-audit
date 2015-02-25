@@ -3,6 +3,7 @@ package me.mariagomez.dropwizard.audit;
 import com.sun.jersey.api.model.AbstractResourceMethod;
 import com.sun.jersey.spi.container.ResourceMethodDispatchProvider;
 import com.sun.jersey.spi.dispatch.RequestDispatcher;
+import me.mariagomez.dropwizard.audit.providers.PrincipalProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -27,6 +28,8 @@ public class AuditMethodDispatchProviderTest {
     private RequestDispatcher defaultRequestDispatcher;
     @Mock
     private AuditWriter auditWriter;
+    @Mock
+    private PrincipalProvider principalProvider;
     private List<String> auditMethods = newArrayList("POST", "PUT", "DELETE");
 
     private AuditMethodDispatchProvider auditMethodDispatchProvider;
@@ -36,7 +39,7 @@ public class AuditMethodDispatchProviderTest {
         initMocks(this);
         when(provider.create(abstractResourceMethod)).thenReturn(defaultRequestDispatcher);
 
-        auditMethodDispatchProvider = new AuditMethodDispatchProvider(provider, auditWriter);
+        auditMethodDispatchProvider = new AuditMethodDispatchProvider(provider, auditWriter, principalProvider);
     }
 
     @Test
@@ -48,7 +51,7 @@ public class AuditMethodDispatchProviderTest {
 
     @Test
     public void shouldReturnCustomDispatcherWhenMethodIsPOSTOrPUTOrDELETE() {
-        AuditRequestDispatcher expected = new AuditRequestDispatcher(defaultRequestDispatcher, auditWriter);
+        AuditRequestDispatcher expected = new AuditRequestDispatcher(defaultRequestDispatcher, auditWriter, principalProvider);
         for (String auditMethod : auditMethods) {
             when(abstractResourceMethod.getHttpMethod()).thenReturn(auditMethod);
             AuditRequestDispatcher actual = (AuditRequestDispatcher) auditMethodDispatchProvider.create(abstractResourceMethod);

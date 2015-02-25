@@ -2,6 +2,7 @@ package me.mariagomez.dropwizard.audit;
 
 import com.sun.jersey.spi.container.ResourceMethodDispatchAdapter;
 import com.sun.jersey.spi.container.ResourceMethodDispatchProvider;
+import me.mariagomez.dropwizard.audit.providers.PrincipalProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -17,11 +18,13 @@ public class AuditMethodDispatchAdapterTest {
     private AuditMethodDispatchAdapter adapter;
     @Mock
     private AuditWriter auditWriter;
+    @Mock
+    private PrincipalProvider principalProvider;
 
     @Before
     public void setUp() {
         initMocks(this);
-        adapter = new AuditMethodDispatchAdapter(auditWriter);
+        adapter = new AuditMethodDispatchAdapter(auditWriter, principalProvider);
     }
 
     @Test
@@ -32,7 +35,7 @@ public class AuditMethodDispatchAdapterTest {
     @Test
     public void shouldReturnAnInstanceOfAuditProvider() {
         ResourceMethodDispatchProvider providerToAdapt = mock(ResourceMethodDispatchProvider.class);
-        AuditMethodDispatchProvider expected = new AuditMethodDispatchProvider(providerToAdapt, auditWriter);
+        AuditMethodDispatchProvider expected = new AuditMethodDispatchProvider(providerToAdapt, auditWriter, principalProvider);
         ResourceMethodDispatchProvider provider = adapter.adapt(providerToAdapt);
 
         assertReflectionEquals(expected, provider);

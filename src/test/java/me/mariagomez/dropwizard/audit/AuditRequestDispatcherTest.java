@@ -8,6 +8,7 @@ import com.sun.jersey.api.core.HttpResponseContext;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import com.sun.jersey.spi.dispatch.RequestDispatcher;
 import io.dropwizard.jackson.Jackson;
+import me.mariagomez.dropwizard.audit.providers.PrincipalProvider;
 import org.apache.commons.lang.RandomStringUtils;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -42,11 +43,15 @@ public class AuditRequestDispatcherTest {
     private AuditWriter auditWriter;
     @Mock
     private HttpResponseContext responseContext;
+    @Mock
+    private PrincipalProvider principalProvider;
+
     private String method;
     private String entity;
-    private AuditRequestDispatcher auditRequestDispatcher;
     private String path;
     private String remoteAddress;
+    private String username;
+    private AuditRequestDispatcher auditRequestDispatcher;
 
     @Before
     public void setUp() {
@@ -55,6 +60,7 @@ public class AuditRequestDispatcherTest {
         path = randomAlphabetic(20);
         method = randomAlphabetic(4);
         remoteAddress = randomAlphabetic(10);
+        username = randomAlphabetic(10);
         MultivaluedMap<String, String> headerList = new MultivaluedMapImpl();
         headerList.putSingle(X_REMOTE_ADDR, remoteAddress);
         HttpRequestContext requestContext = mock(HttpRequestContext.class);
@@ -64,8 +70,9 @@ public class AuditRequestDispatcherTest {
         when(requestContext.getPath()).thenReturn(path);
         when(requestContext.getRequestHeaders()).thenReturn(headerList);
         when(responseContext.getEntity()).thenReturn(entity);
+        when(principalProvider.getUsername()).thenReturn(username);
 
-        auditRequestDispatcher = new AuditRequestDispatcher(dispatcher, auditWriter);
+        auditRequestDispatcher = new AuditRequestDispatcher(dispatcher, auditWriter, principalProvider);
     }
 
     @Test
@@ -127,5 +134,6 @@ public class AuditRequestDispatcherTest {
         assertThat(value.getEntity(), is(MAPPER.writeValueAsString(entity)));
         assertThat(value.getPath(), is(path));
         assertThat(value.getRemoteAddress(), is(remoteAddress));
+        assertThat(value.getUsername(), is(username));
     }
 }
