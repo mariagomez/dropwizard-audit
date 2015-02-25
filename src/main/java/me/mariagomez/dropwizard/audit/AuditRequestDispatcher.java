@@ -1,9 +1,20 @@
 package me.mariagomez.dropwizard.audit;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.api.core.HttpContext;
 import com.sun.jersey.spi.dispatch.RequestDispatcher;
+import io.dropwizard.jackson.Jackson;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static me.mariagomez.dropwizard.audit.Constants.X_REMOTE_ADDR;
 
 public class AuditRequestDispatcher implements RequestDispatcher {
+
+    private static final ObjectMapper MAPPER = Jackson.newObjectMapper();
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuditRequestDispatcher.class);
 
     private RequestDispatcher dispatcher;
     private AuditWriter auditWriter;
@@ -21,9 +32,19 @@ public class AuditRequestDispatcher implements RequestDispatcher {
         if (responseCode < 200 || responseCode > 299) {
             return;
         }
-
         String method = context.getRequest().getMethod();
-        AuditInfo auditInfo = new AuditInfo(method);
+        String path = context.getRequest().getPath();
+        String remoteAddress = context.getRequest().getRequestHeaders().getFirst(X_REMOTE_ADDR);
+        DateTime date = DateTime.now();
+
+        String entity = null;
+        try {
+            entity = MAPPER.writeValueAsString(context.getResponse().getEntity());
+        } catch (JsonProcessingException e) {
+            LOGGER.error("Error while parsing the entity. \n Message: " + e.getMessage());
+        }
+
+        AuditInfo auditInfo = new AuditInfo(method, responseCode, date, entity, path, remoteAddress);
         auditWriter.write(auditInfo);
 
     }

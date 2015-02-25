@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
-import static org.mockito.Matchers.isA;
+import static org.mockito.Matchers.refEq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -21,6 +21,8 @@ public class AuditBundleTest {
     private Environment environment;
     @Mock
     private JerseyEnvironment jersey;
+    @Mock
+    private AuditWriter auditWriter;
 
     private AuditBundle auditBundle;
 
@@ -28,12 +30,13 @@ public class AuditBundleTest {
     public void setUp() throws Exception {
         initMocks(this);
         when(environment.jersey()).thenReturn(jersey);
-        auditBundle = new AuditBundle();
+        auditBundle = new AuditBundle(auditWriter);
     }
 
     @Test
     public void shouldRegisterAuditAdapter() throws Exception {
+        AuditMethodDispatchAdapter auditMethodDispatchAdapter = new AuditMethodDispatchAdapter(auditWriter);
         auditBundle.run(configuration, environment);
-        verify(jersey, times(1)).register(isA(AuditMethodDispatchAdapter.class));
+        verify(jersey, times(1)).register(refEq(auditMethodDispatchAdapter));
     }
 }
